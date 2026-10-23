@@ -7,6 +7,7 @@ BT="${ANDROID_BUILD_TOOLS:-/tmp/madhava-sdk/build-tools/android-15}"
 AJ="${ANDROID_JAR:-/tmp/madhava-sdk/platform/android-35/android.jar}"
 mkdir -p build/classes build/dex
 node_modules/.bin/esbuild web/app.js --bundle --minify --target=chrome100 --outfile=app/src/main/assets/app.js
+node_modules/.bin/esbuild web/widget3d.js --bundle --minify --format=iife --target=chrome100 --outfile=app/src/main/assets/widget3d.js
 cp web/index.html web/style.css web/pcm-worklet.js app/src/main/assets/
 "$BT/aapt2" compile --dir app/src/main/res -o build/resources.zip
 "$BT/aapt2" link -o build/unsigned.apk --manifest app/src/main/AndroidManifest.xml -I "$AJ" -A app/src/main/assets build/resources.zip --auto-add-overlay
@@ -20,5 +21,5 @@ PY
 if [ ! -f development.jks ]; then
  keytool -genkeypair -keystore development.jks -storepass android -keypass android -alias madhava -dname 'CN=Madhava Personal Build' -keyalg RSA -keysize 2048 -validity 10000 >/dev/null 2>&1
 fi
-"$BT/apksigner" sign --ks development.jks --ks-key-alias madhava --ks-pass pass:android --key-pass pass:android --out build/Madhava-v1.35.apk build/aligned.apk
-"$BT/apksigner" verify --verbose build/Madhava-v1.35.apk
+"$BT/apksigner" sign --ks development.jks --ks-key-alias madhava --ks-pass pass:android --key-pass pass:android --out build/Madhava-v1.36.apk build/aligned.apk
+"$BT/apksigner" verify --verbose build/Madhava-v1.36.apk

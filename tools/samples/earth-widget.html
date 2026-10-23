@@ -1,0 +1,20 @@
+<h3>The Earth</h3>
+<div id="v"></div>
+<p id="cap" style="margin-top:10px">Drag to turn the Earth. Tap the button to show the clouds.</p>
+<button id="b" class="ghost">Hide clouds</button>
+<script>
+const s=Madhava3D.stage('#v',{height:300,distance:3.4,background:0x050b24,spin:.2});
+if(!s.ok){document.getElementById('cap').textContent='The Earth is a blue world of oceans and land.'}else{
+const T=s.THREE,r=Madhava3D.rng(7);
+const land=Madhava3D.canvasTexture(1024,512,(c,w,h)=>{c.fillStyle='#1c5f9c';c.fillRect(0,0,w,h);
+ for(let i=0;i<46;i++){const x=r()*w,y=h*(.12+r()*.76),n=5+(r()*9|0);c.fillStyle=r()<.3?'#c9b37a':'#3f8a4a';c.beginPath();
+  for(let k=0;k<n;k++){const a=k/n*6.283,d=18+r()*60;c.lineTo(x+Math.cos(a)*d*1.5,y+Math.sin(a)*d)}c.closePath();c.fill()}
+ c.fillStyle='#f4f8ff';c.fillRect(0,0,w,h*.06);c.fillRect(0,h*.94,w,h*.06)});
+const earth=s.add(new T.Mesh(new T.SphereGeometry(1,64,48),new T.MeshStandardMaterial({map:land,roughness:.8})));
+const cloudTex=Madhava3D.canvasTexture(512,256,(c,w,h)=>{c.clearRect(0,0,w,h);for(let i=0;i<90;i++){c.fillStyle='rgba(255,255,255,'+(.25+r()*.4)+')';c.beginPath();c.ellipse(r()*w,r()*h,10+r()*40,4+r()*10,0,0,6.283);c.fill()}});
+const clouds=s.add(new T.Mesh(new T.SphereGeometry(1.03,48,32),new T.MeshStandardMaterial({map:cloudTex,transparent:true,depthWrite:false})));
+s.add(new T.Mesh(new T.SphereGeometry(1.08,48,32),new T.MeshBasicMaterial({color:0x6ab7ff,transparent:true,opacity:.12,side:T.BackSide})));
+s.onFrame((t,dt)=>{clouds.rotation.y+=dt*.05});
+document.getElementById('b').onclick=e=>{clouds.visible=!clouds.visible;e.target.textContent=clouds.visible?'Hide clouds':'Show clouds'};
+}
+</script>

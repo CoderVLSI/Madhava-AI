@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {extractWidget,isSafeWidgetHtml,widgetDocument,widgetNote,WIDGET_CSP,WIDGET_MAX} from '../web/widgets.js';
+import {extractWidget,isSafeWidgetHtml,widgetDocument,widgetNote,uses3D,WIDGET_CSP,WIDGET_MAX} from '../web/widgets.js';
 const good='<div class="card"><button id="b">Breathe</button></div><script>document.getElementById("b").onclick=()=>1</script>';
 let r=extractWidget(`Breathe slowly.\n<madhava-widget title="Breathing guide">${good}</madhava-widget>\nThat is all.`);
 assert.equal(r.widget.title,'Breathing guide');assert.equal(r.widget.html,good);assert.equal(r.text,'Breathe slowly.\n\nThat is all.');
@@ -13,4 +13,8 @@ r=extractWidget('Answer <madhava-widget title="Chariot" summary="Tap six parts o
 assert.equal(r.widget.title,'Chariot');assert.equal(r.widget.summary,'Tap six parts of a chariot to see what each means.');assert.ok(widgetNote(r.widget).includes('Chariot')&&widgetNote(r.widget).includes('Tap six parts of a chariot'));
 const derived=widgetNote({title:'T',html:'<style>.x{color:red}</style><h3>Heading text</h3><script>var steps=["First step explains the careless gift","Second step explains the waiting"]</'+'script>'});
 assert.match(derived,/Heading text/);assert.match(derived,/careless gift/);assert.ok(!derived.includes('color:red'));assert.equal(widgetNote(null),'');
+const three='<div id="v"></div><script>const s=Madhava3D.stage("#v");s.add(new THREE.Mesh(new THREE.SphereGeometry(1),new THREE.MeshStandardMaterial()))</'+'script>';
+assert.ok(uses3D(three)&&!uses3D(good));assert.equal(isSafeWidgetHtml(three),true);
+const d3=widgetDocument(three);assert.ok(d3.includes('<script src="/widget3d.js"></script>'));assert.ok(d3.indexOf('/widget3d.js')<d3.indexOf(three),'toolkit loads before the card code');assert.ok(!widgetDocument(good).includes('widget3d.js'));
+assert.match(WIDGET_CSP,/script-src 'self' 'unsafe-inline'/);assert.match(WIDGET_CSP,/connect-src 'none'/);
 console.log('PASS widget extraction, truncation, fenced blocks, bridge/iframe rejection and locked-down document');
