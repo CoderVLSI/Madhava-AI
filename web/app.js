@@ -9,9 +9,9 @@ const paths={back:'M15 18l-6-6 6-6',phone:'M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 
 function icon(name){return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name]||paths.spark}"/></svg>`}
 function setIcon(el,name){el.innerHTML=icon(name)}
 document.querySelectorAll('[data-icon]').forEach(el=>setIcon(el,el.dataset.icon));
-const defaults={textModel:TEXT_MODELS[0],liveModel:LIVE_MODELS[0],voice:'Charon',language:'Auto',fallback:true};
+const defaults={textModel:TEXT_MODELS[0],liveModel:LIVE_MODELS[0],voice:'Orus',language:'Auto',fallback:true};
 let prefs={...defaults,...safeJSON(localStorage.getItem('prefs'),{})};let messages=safeJSON(localStorage.getItem('messages'),[]),calls=safeJSON(localStorage.getItem('calls'),[]);let browserKey='';
-if(!prefs.personaVersion){if(prefs.voice==='Puck')prefs.voice='Charon';prefs.personaVersion=2;localStorage.setItem('prefs',JSON.stringify(prefs))}
+if((prefs.personaVersion||0)<4){prefs.voice='Orus';prefs.personaVersion=4;localStorage.setItem('prefs',JSON.stringify(prefs))}
 const native=window.Android;
 const key=()=>native?native.getKey():browserKey;
 function store(){try{localStorage.setItem('messages',JSON.stringify(messages.slice(-300)));localStorage.setItem('calls',JSON.stringify(calls.slice(-100)));localStorage.setItem('prefs',JSON.stringify(prefs))}catch{toast('Device storage is full. Recent messages could not be saved.')}}

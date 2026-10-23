@@ -4,7 +4,7 @@ A personal Android companion with WhatsApp-inspired chat, a local 3D Krishna ava
 
 ## Install
 
-Install `Madhava-v1.6.apk` on Android 8 or newer. Open Settings and paste your own Google AI Studio API key. Tap Save key, then Test & refresh models. Return to chat, or use the phone / video button. The video button opens the 3D avatar call screen. Turn the camera on explicitly to send camera frames to Gemini. Preview 3D avatar works offline without a key.
+Install `Madhava-v1.23.apk` on Android 8 or newer. Open Settings and paste your own Google AI Studio API key. Tap Save key, then Test & refresh models. Return to chat, or use the phone / video button. The video button opens the 3D avatar call screen. Turn the camera on explicitly to send camera frames to Gemini. Preview 3D avatar works offline without a key.
 
 The APK is a universal Android package, not a React Native build. It uses a small Java Android shell and an entirely bundled HTML/JS/Three.js UI. No server or external model-download service is required. Gemini API access and quota are required for real responses.
 
@@ -23,11 +23,11 @@ The APK is a universal Android package, not a React Native build. It uses a smal
 
 ## Version 1.6 Rama and Vamana
 
-Rama reuses the detailed Krishna sculpted clothing, garlands, ornaments, face and crown, with the peacock feather and flute removed, a curved gold bow held at its central grip, an arrow and a back quiver. Vamana is rebuilt as a tiny youthful figure with a round face, larger eyes, soft cheeks, short limbs, a small umbrella and water pot. Both retain conversational head movement, blinking and mouth animation. Editable masters and the refinement script are included in model-source.
+Rama reuses the detailed Krishna sculpted clothing, garlands, ornaments, face and crown, with the peacock feather and flute removed, a curved gold bow held at its central grip, an arrow and a back quiver. Vamana is rebuilt as a tiny youthful figure with a round face, larger eyes, soft cheeks, short limbs, a small umbrella and water pot. Both retain conversational head movement, blinking and mouth animation. 
 
 ## Version 1.4 Dashavatara forms
 
-Bundled local Blender models: Matsya, Kurma, Varaha, Narasimha, Vamana, Parashurama, Rama, Krishna, Buddha and Kalki. This list uses Buddha as the ninth form; Vishwaroopa remains separate. Each of the nine additions has distinct modeled features and props. Kalki is seated astride a white horse, with bent thighs, hanging boots and stirrups, reins and a raised sword. Narasimha has a broader muscular torso, sculpted chest and abdominal muscles, larger mane, narrowed amber eyes, exposed fangs and claws. These are stylized devotional figures, not photorealistic sculptures.
+Bundled local models (replaced in 1.23 by realistic textured GLBs): Matsya, Kurma, Varaha, Narasimha, Vamana, Parashurama, Rama, Krishna, Buddha and Kalki. This list uses Buddha as the ninth form; Vishwaroopa remains separate. Each of the nine additions has distinct modeled features and props. Kalki is seated astride a white horse, with bent thighs, hanging boots and stirrups, reins and a raised sword. Narasimha has a broader muscular torso, sculpted chest and abdominal muscles, larger mane, narrowed amber eyes, exposed fangs and claws. These are stylized devotional figures, not photorealistic sculptures.
 
 During a call ask, for example, "Show Narasimha", "నరసింహ రూపం చూపించు", or "राम रूप दिखाओ". A Gemini Live form tool handles broader requests, and a local transcript matcher handles explicit names. The call waits for an asset to load before confirming display; errors leave the preceding form visible. The Form picker also works in offline preview. Forms persist until requested again or the call ends. The conversation retains the disclosed devotional portrayal rather than claiming literal divine transformation. Head motion, blinking and audio-reactive mouth opening continue on each new model.
 
