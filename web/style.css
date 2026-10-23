@@ -1,7 +1,7 @@
 /* Madhava: Yamuna at dusk. Indigo night, peacock teal, marigold garland. */
 :root{
   --night:#0c1226;--river:#141d38;--river2:#1c2749;--line:#27335a;
-  --sandal:#efe4cb;--mist:#9aa7c7;--dim:#6f7ca1;
+  --sandal:#efe4cb;--mist:#9aa7c7;--dim:#8d9bc0;
   --peacock:#1b8a89;--peacock-deep:#12615f;--marigold:#f0a63a;--lotus:#d4607f;
   --font-display:'Iowan Old Style','Noto Serif','Palatino Linotype',Palatino,Georgia,serif;
   --font-body:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Roboto,sans-serif;
@@ -36,7 +36,7 @@ svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke
 .portrait>img{position:relative;width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid var(--night)}
 .portraitBadge{position:absolute;bottom:-2px;right:-2px;width:30px;height:30px;border:3px solid var(--night);border-radius:50%;background:var(--marigold);color:var(--night);display:grid;place-items:center}
 .portraitBadge svg{width:15px;height:15px}
-.eyebrow{font-size:11px;font-weight:600;letter-spacing:1.6px;color:var(--marigold)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.3px;color:var(--marigold)}
 .welcome h1{font-family:var(--font-display);font-weight:500;font-size:34px;line-height:1.15;margin:14px 0 12px;color:var(--sandal)}
 .welcome p{font-size:14px;line-height:1.65;color:var(--mist);margin:0 0 24px}
 .suggestions{display:flex;flex-direction:column;gap:8px;max-width:310px;margin:auto}
@@ -47,7 +47,7 @@ svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke
 .previewLink svg{width:15px;height:15px}
 .bubble{max-width:88%;border-radius:16px;padding:12px 14px 7px;background:var(--river2);color:var(--sandal);border:1px solid var(--line);align-self:flex-start;border-top-left-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.6}
 .bubble.user{background:var(--peacock-deep);border-color:var(--peacock);color:#fff;align-self:flex-end;border-radius:16px 4px 16px 16px}
-.bubble .meta{display:flex;justify-content:flex-end;align-items:center;gap:5px;font-size:11px;color:var(--mist);margin-top:4px;line-height:1.3}
+.bubble .meta{display:flex;justify-content:flex-end;align-items:center;gap:5px;font-size:12px;color:var(--mist);margin-top:4px;line-height:1.3}
 .bubble.user .meta{color:#bfe3e0}
 .meta svg{width:13px;height:13px;color:var(--marigold)}
 .meta span:first-child{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -65,7 +65,7 @@ textarea::placeholder{color:var(--dim)}
 .inputWrap:focus-within{border-color:var(--marigold)}
 .send{width:47px;height:47px;border:0;border-radius:50%;background:var(--marigold);color:var(--night);display:grid;place-items:center;flex-shrink:0}
 .send svg{width:21px;height:21px;margin-left:2px}
-.chatFoot{background:var(--night);color:var(--dim);text-align:center;font-size:11px;padding:3px 0 8px}
+.chatFoot{background:var(--night);color:var(--dim);text-align:center;font-size:12px;padding:3px 0 8px}
 
 /* Home, settings, study */
 .simpleHeader{display:flex;align-items:center;justify-content:space-between;padding:25px 24px 20px;border-bottom:1px solid var(--line);background:var(--river)}
@@ -121,15 +121,15 @@ textarea::placeholder{color:var(--dim)}
 .callGradient{pointer-events:none;position:absolute;inset:0;background:linear-gradient(#070b1aa0,transparent 25%,transparent 55%,#070b1a 89%)}
 .callHeader{position:relative;display:flex;align-items:flex-start;padding:18px 13px;text-align:center;z-index:2}
 .callHeader>div{flex:1}
-.callHeader span{font-size:11px;letter-spacing:1.6px;color:var(--marigold)}
+.callHeader span{font-size:13px;letter-spacing:.3px;color:var(--marigold)}
 .callHeader h2{font-family:var(--font-display);font-size:30px;font-weight:500;margin:7px 0 4px}
 .callHeader h2 i{font:normal 9px var(--font-body);border:1px solid var(--marigold);border-radius:4px;padding:2px 4px;vertical-align:middle;color:var(--marigold)}
 .callHeader p{font-size:13px;color:#c3cde6;margin:0}
-#callBadge{position:absolute;top:119px;left:50%;transform:translateX(-50%);padding:7px 12px;border:1px solid #ffffff2b;background:#ffffff12;border-radius:20px;font-size:11px;color:#dbe3f5;display:flex;align-items:center;gap:6px;white-space:nowrap}
+#callBadge{position:absolute;top:119px;left:50%;transform:translateX(-50%);padding:7px 12px;border:1px solid #ffffff2b;background:#ffffff12;border-radius:20px;font-size:12px;color:#dbe3f5;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .statusDot{width:6px;height:6px;border-radius:50%;background:var(--marigold)}
 #selfVideo{position:absolute;right:16px;top:165px;width:87px;height:123px;object-fit:cover;border-radius:14px;border:1px solid #ffffff55;background:#0c1226;transform:scaleX(-1)}
 #callCaptions{position:absolute;bottom:207px;left:25px;right:25px;text-align:center;text-shadow:0 2px 6px #000c;max-height:100px;overflow-y:auto}
-#captionLabel{font-size:11px;letter-spacing:1.2px;color:var(--marigold)}
+#captionLabel{font-size:12px;letter-spacing:.2px;color:var(--marigold)}
 #captionText{font-size:16px;line-height:1.55;margin:7px 0 0;color:#f6efdc}
 .callBottom{position:absolute;bottom:0;left:0;right:0;padding:5px 16px 18px;text-align:center}
 .callBottom>p{font-size:12px;color:#aeb9d6;margin:9px 0 22px}
@@ -140,11 +140,8 @@ textarea::placeholder{color:var(--dim)}
 .callControls button{border:1px solid #ffffff33;border-radius:50%;width:56px;height:56px;background:#ffffff1a;color:#f0ecdf;display:grid;place-items:center}
 .callControls button.off{background:var(--sandal);color:var(--night)}
 .callControls .hangup{background:#d9494f;border:0;color:#fff}
-.callControls span{font-size:11px;color:#c3cde6}
-.callBottom .avatarNote{font-size:11px;color:#8e9bbd;margin:22px 0 0}
-.formPickerLabel{position:absolute;top:154px;left:50%;transform:translateX(-50%);z-index:5;display:flex;gap:8px;align-items:center;font-size:13px;color:#dbe3f5;background:#0c1226e6;border:1px solid #ffffff2b;border-radius:22px;padding:6px 13px}
-.formPickerLabel select{background:transparent;color:#fff;border:0;max-width:145px;font-size:14px}
-.formPickerLabel option{background:var(--river);color:var(--sandal)}
+.callControls span{font-size:12px;color:#c3cde6}
+.callBottom .avatarNote{font-size:12px;color:#8e9bbd;margin:22px 0 0}
 .callHeader h2 #visibleFormName{font:inherit;letter-spacing:0;color:inherit}
 
 /* Overlays */
@@ -182,3 +179,5 @@ dialog .row .primary,dialog .row .secondary{width:auto}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media(max-height:730px){.welcome{padding-top:0}.portrait{width:92px;height:92px;margin-bottom:20px}.portrait::before{inset:-16px}.welcome h1{font-size:28px}.welcome p{margin-bottom:16px}.suggestions button{padding:11px}.previewLink{padding-top:15px}#messages{padding-top:14px}.callHeader{padding-top:12px}#callCaptions{bottom:185px}.callBottom{padding-bottom:12px}.callBottom>p{margin-bottom:14px}.callControls button{width:50px;height:50px}.callBottom .avatarNote{margin-top:15px}}
 @media(max-width:360px){.contact{gap:6px}.contact img{width:36px;height:36px}.contact strong{font-size:16px}.contact small{max-width:116px;font-size:10px}.chatHeader>.iconbtn{width:36px;padding:7px}.row{flex-wrap:wrap}.row button{flex:1 0 100%}}
+.modeNav .secondary{text-align:left;font-size:15px;font-family:var(--font-display);font-weight:600;padding:15px 16px;border-left:3px solid var(--marigold);background:var(--river)}
+#studyChat{margin-left:auto;padding:8px 16px;min-height:40px}
