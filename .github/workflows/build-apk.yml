@@ -1,0 +1,69 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed only to attach the APK to a GitHub Release on tags
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BUILD_TOOLS_VERSION: '35.0.0'
+      PLATFORM: 'android-35'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Install Android SDK pieces
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "build-tools;$BUILD_TOOLS_VERSION" "platforms;$PLATFORM" >/dev/null
+          echo "ANDROID_BUILD_TOOLS=$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION" >> "$GITHUB_ENV"
+          echo "ANDROID_JAR=$ANDROID_HOME/platforms/$PLATFORM/android.jar" >> "$GITHUB_ENV"
+
+      - name: Restore signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > development.jks
+            echo "Using signing key from the ANDROID_KEYSTORE_BASE64 secret."
+          else
+            echo "::warning::No ANDROID_KEYSTORE_BASE64 secret. Building with a throwaway key; this APK cannot upgrade an installed Madhava."
+          fi
+
+      - name: Build and sign APK
+        run: bash build-local.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Madhava-apk
+          path: build/Madhava-*.apk
+          if-no-files-found: error
+
+      - name: Attach APK to release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/Madhava-*.apk
