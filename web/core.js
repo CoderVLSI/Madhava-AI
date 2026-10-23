@@ -31,12 +31,23 @@ export async function generate({key,models,history,onFallback,signal,fetcher=fet
  let last;
  for(let i=0;i<models.length;i++){
   const model=models[i];if(i)onFallback?.(model);
-  const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:PERSONA+grounding}]},contents:history.slice(-30).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.text}]})),generationConfig:{maxOutputTokens:4096}}),signal});
+  const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:PERSONA+grounding}]},contents:history.slice(-30).map(m=>({role:m.role==='assistant'?'model':'user',parts:[...(m.image?[{inlineData:{mimeType:m.image.mime,data:m.image.data}}]:[]),...(m.text||!m.image?[{text:m.text||''}]:[])]})),generationConfig:{maxOutputTokens:4096}}),signal});
   let data;try{data=await response.json()}catch{throw Error(`Gemini returned an unreadable response (${response.status})`)}
   if(!response.ok){last=Error(data.error?.message||`Gemini error ${response.status}`);if([404,429,500,502,503,504].includes(response.status)&&i<models.length-1)continue;throw last}
   const text=(data.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('');
   if(!text)throw Error(data.promptFeedback?.blockReason?`Gemini could not answer this prompt (${data.promptFeedback.blockReason}).`:'Gemini returned no text. Please try a shorter message.');
   return {text,model,gita:references};
+ }
+ throw last||Error('No text model selected');
+}
+export const TRANSCRIBE_PROMPT='Transcribe this voice recording exactly as spoken. Keep the original language and script (Telugu in Telugu script, Hindi in Devanagari, English in English) and do not translate. Return only the transcript with natural punctuation, with no quotes or commentary. If there is no clear speech, return an empty response.';
+export async function transcribe({key,models,audio,language='Auto',signal,fetcher=fetch}){
+ const hint=language&&language!=='Auto'?' The speaker is most likely using '+language+'.':'';let last;
+ for(let i=0;i<models.length;i++){
+  const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(models[i])}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{role:'user',parts:[{inlineData:{mimeType:audio.mime,data:audio.data}},{text:TRANSCRIBE_PROMPT+hint}]}],generationConfig:{maxOutputTokens:2048,temperature:0}}),signal});
+  let data;try{data=await response.json()}catch{throw Error(`Gemini returned an unreadable response (${response.status})`)}
+  if(!response.ok){last=Error(data.error?.message||`Gemini error ${response.status}`);if([404,429,500,502,503,504].includes(response.status)&&i<models.length-1)continue;throw last}
+  return (data.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('').trim();
  }
  throw last||Error('No text model selected');
 }

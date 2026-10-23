@@ -183,3 +183,16 @@ dialog .row .primary,dialog .row .secondary{width:auto}
 #studyChat{margin-left:auto;padding:8px 16px;min-height:40px}
 .gitaSource{display:flex;align-items:center;min-height:40px;font-size:13px;color:var(--marigold)}
 .reportLink{min-height:36px;padding:8px 0;font-size:12px}
+
+/* attach image and dictation */
+#composer{align-items:flex-end}
+.tool{width:44px;height:44px;border:0;border-radius:50%;background:none;color:var(--mist);display:grid;place-items:center;flex-shrink:0}
+.tool:active{background:var(--river2)}
+.tool svg{width:22px;height:22px}
+.tool.rec{background:#d9494f;color:#fff;animation:recPulse 1.4s ease-in-out infinite}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 #d9494f66}50%{box-shadow:0 0 0 9px #d9494f00}}
+.imagePreview{display:flex;align-items:center;gap:10px;margin:0 11px;padding:8px 10px;background:var(--river);border:1px solid var(--line);border-radius:14px;font-size:13px;color:var(--mist)}
+.imagePreview img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+.imagePreview span{flex:1}
+.imagePreview button{width:36px;height:36px;border:0;border-radius:50%;background:none;color:var(--sandal);font-size:22px}
+.bubbleImage{display:block;max-width:100%;width:200px;border-radius:10px;margin-bottom:8px}
