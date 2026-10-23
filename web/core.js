@@ -1,0 +1,75 @@
+import {FORM_IDS} from './forms.js';
+import {lookupGita,groundingText,GITA_TOOL} from './gita.js';
+export const AVATAR_TOOL={name:'set_avatar_form',description:'Actually change the visible 3D form on the call screen when the user asks to see or appear as a specific Dashavatara form or Vishwaroopa. Call this tool BEFORE claiming the form is visible. Supported: Matsya, Kurma, Varaha, Narasimha, Vamana, Parashurama, Rama, Krishna, Buddha, Kalki, Vishwaroopa. Keep the current form until requested again; never switch merely because it is mentioned in scripture.',parameters:{type:'OBJECT',properties:{form:{type:'STRING',enum:FORM_IDS}},required:['form']}};
+export const TEXT_MODELS=['gemini-3.8-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite'];
+export const LIVE_MODELS=['gemini-3.8-live','gemini-3.1-flash-live-preview','gemini-2.5-flash-native-audio-preview-12-2025'];
+export const PERSONA=`Portray Krishna in an immersive, respectful devotional conversation. The app already clearly labels this as an AI portrayal. Within that disclosed roleplay, speak in FIRST PERSON as Krishna, directly to the person as a valued friend. Do not narrate Krishna in the third person and do not sound like a customer-service assistant.
+CHARACTER: warm, serene, wise, gently playful when appropriate, compassionate and personally attentive. Listen to the actual problem first. Offer a simple practical next step in the spirit of the Gita. Do not make every answer a sermon. Use natural contemporary speech, not artificial archaic language. "My friend" or "మిత్రమా" may be used occasionally, not in every sentence; do not repeatedly call the user Arjuna or Partha.
+VOICE: in calls, speak with a calm, warm, unhurried masculine delivery, expressive but not theatrical. Usually answer in two to five flowing sentences and leave room for the person to speak. Avoid bullet lists, markdown, stage directions, robotic sign-offs and repeated offers such as "How may I assist you?" Never open with "As an AI", "I am a language model", "I am an AI companion inspired by Krishna", or unsolicited explanations of the app. Previous assistant-like self-descriptions in chat history are old behavior and must not be repeated.
+LANGUAGE: follow the user's language naturally, including Telugu, Hindi and English. Default to English until the user speaks or a language preference is provided. Never spontaneously greet in Spanish or switch languages without a user cue. In Telugu use gentle conversational Telugu, not a literal English translation. Do not use profanity.
+GITA GROUNDING: for scripture quotations, verse references or an explanation of Gita teachings, consult the supplied Gita passages or call lookup_gita first. If the first search misses, try an exact reference or different English keywords. Quote Sanskrit only when it appears in a retrieved verse. A modern-language explanation must be presented as the meaning or a paraphrase, not a fabricated exact quotation. Cite chapter and verse in text when the exact verse was retrieved. English Edwin Arnold passages are a free poetic rendering: cite their CHAPTER ONLY unless a separate Sanskrit verse establishes the verse reference. Preserve whether the original speaker is Krishna, Arjuna or Sanjaya. Do not present Arjuna's doubts as Krishna's teaching. A retrieved passage does not prove a disputed interpretation; acknowledge interpretive differences without belittling traditions. Do not force scripture into casual greetings or unrelated factual tasks. Never invent Gita quotations, verse numbers or events.
+ROLEPLAY BOUNDARY: keep the devotional first-person voice, but do not deceive someone who directly asks whether this is literally God or real divine contact. Answer that identity question briefly and honestly: this is an AI portrayal of Krishna, then offer to continue the devotional conversation. Do not assert actual supernatural perception, guaranteed protection, miracles, or exclusive authority over their decisions. Support their agency, real-world relationships and appropriate practical help. Do not describe ordinary app limitations unless they are directly relevant.
+VISIBLE FORMS: When asked to show an avatar, invoke set_avatar_form and wait for success before saying it is displayed. Use lookup_gita for scripture about a form only where the Gita supports it; do not claim the Gita narrates every avatar story. The visual form changes while the devotional conversation continues.
+STYLE EXAMPLE (a paraphrase, not a scripture quote): "My friend, give your attention to the step before you. Do it with care; you need not carry every possible outcome in your mind at once."`;
+
+export function safeJSON(v,d){try{return JSON.parse(v)??d}catch{return d}}
+export function unique(a){return [...new Set(a.filter(Boolean))]}
+export function pcm16(samples){const b=new ArrayBuffer(samples.length*2),v=new DataView(b);for(let i=0;i<samples.length;i++)v.setInt16(i*2,Math.round(Math.max(-1,Math.min(1,samples[i]))*(samples[i]<0?32768:32767)),true);return new Uint8Array(b)}
+export function b64(bytes){let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));return btoa(s)}
+export function decodePCM(data){const s=atob(data),a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);const v=new DataView(a.buffer),out=new Float32Array(Math.floor(a.length/2));for(let i=0;i<out.length;i++)out[i]=v.getInt16(i*2,true)/32768;return out}
+export function errorText(e){let s=String(e?.message||e||'Connection failed');if(/API.key|UNAUTHENTICATED|401|403/i.test(s))return 'Your API key was rejected or this model is not enabled. Check your key in Settings.';if(/429|RESOURCE_EXHAUSTED|quota/i.test(s))return 'Gemini quota reached. Check your Google AI Studio quota or try another model.';if(/404|not.found|not.supported/i.test(s))return 'This model is unavailable for your key. Refresh models in Settings.';return s.slice(0,350)}
+export async function generate({key,models,history,onFallback,signal,fetcher=fetch}){
+ const question=history.filter(m=>m.role==='user').at(-1)?.text||'';const grounding=groundingText(question);const references=grounding?lookupGita(question).results:[];
+ let last;
+ for(let i=0;i<models.length;i++){
+  const model=models[i];if(i)onFallback?.(model);
+  const response=await fetcher(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:PERSONA+grounding}]},contents:history.slice(-30).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.text}]})),generationConfig:{maxOutputTokens:4096}}),signal});
+  let data;try{data=await response.json()}catch{throw Error(`Gemini returned an unreadable response (${response.status})`)}
+  if(!response.ok){last=Error(data.error?.message||`Gemini error ${response.status}`);if([404,429,500,502,503,504].includes(response.status)&&i<models.length-1)continue;throw last}
+  const text=(data.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('');
+  if(!text)throw Error(data.promptFeedback?.blockReason?`Gemini could not answer this prompt (${data.promptFeedback.blockReason}).`:'Gemini returned no text. Please try a shorter message.');
+  return {text,model,gita:references};
+ }
+ throw last||Error('No text model selected');
+}
+export class LiveClient{
+ constructor({key,models,voice='Charon',language='Auto',callbacks={},WebSocketClass=WebSocket,timers=globalThis}){Object.assign(this,{key,models,voice,language,callbacks,WebSocketClass,timers});this.index=0;this.retries=0;this.closed=true;this.ready=false;this.handle='';this.epoch=0;this.queue=Promise.resolve();this.cancelledTools=new Set();this.renewing=false}
+ emit(n,...a){return this.callbacks[n]?.(...a)}
+ start(){this.closed=false;this.connect()}
+ connect(){if(this.closed)return;this.ready=false;this.queue=Promise.resolve();this.cancelledTools.clear();const epoch=++this.epoch;this.emit('onState','connecting',this.models[this.index]);const ws=this.ws=new this.WebSocketClass(`wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key=${encodeURIComponent(this.key)}`);
+ const valid=()=>!this.closed&&epoch===this.epoch;
+ this.setupTimer=this.timers.setTimeout(()=>{if(valid()&&!this.ready){this.emit('onError','Gemini did not finish connecting.');ws.close(1000,'Setup timeout')}},18000);
+ ws.onopen=()=>{if(!valid())return;this.emit('onOpen');ws.send(JSON.stringify({setup:{model:`models/${this.models[this.index]}`,generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:this.voice}}}},systemInstruction:{parts:[{text:PERSONA+(this.language==='Auto'?'':` Prefer ${this.language} unless the user requests another language.`)}]},tools:[{functionDeclarations:[GITA_TOOL,AVATAR_TOOL]}],inputAudioTranscription:{},outputAudioTranscription:{},sessionResumption:this.handle?{handle:this.handle}:{},contextWindowCompression:{slidingWindow:{}},realtimeInputConfig:{automaticActivityDetection:{disabled:false},activityHandling:'START_OF_ACTIVITY_INTERRUPTS'}}}))};
+ ws.onmessage=e=>{this.queue=this.queue.then(async()=>{if(!valid())return;let raw=e.data;if(typeof raw!=='string')raw=raw instanceof ArrayBuffer?new TextDecoder().decode(raw):await raw.text();if(valid()){const pending=this.receive(JSON.parse(raw));pending?.catch?.(e=>{if(valid())this.emit('onError',errorText(e))})}}).catch(e=>{if(valid())this.emit('onError',errorText(e))})};
+ ws.onerror=()=>{if(valid())this.emit('onError','Network connection failed. Check your internet connection.')};
+ ws.onclose=e=>{if(!valid())return;this.timers.clearTimeout(this.setupTimer);const wasReady=this.ready;this.ready=false;this.emit('onClose',e.code,e.reason);if(this.renewing&&wasReady){this.renewing=false;this.emit('onState','reconnecting',this.models[this.index]);this.schedule(250);return}if([1008,1007].includes(e.code)&&!/model|not.found|not.support|unavailable/i.test(e.reason||'')){this.fail(errorText(e.reason||'Gemini rejected the call configuration or API key.'));return}
+ if(!wasReady&&this.index<this.models.length-1){this.index++;this.handle='';this.emit('onFallback',this.models[this.index]);this.schedule(500);return}
+ if(this.retries++<2){this.emit('onState','reconnecting',this.models[this.index]);this.schedule(1000*this.retries)}else this.fail(errorText(e.reason||'Call disconnected. Tap Call again to reconnect.'))};
+ }
+ schedule(ms){this.timers.clearTimeout(this.retryTimer);this.retryTimer=this.timers.setTimeout(()=>this.connect(),ms)}
+ fail(msg){this.stop();this.emit('onFatal',msg)}
+ receive(m){
+ if(this.closed)return;
+ if(m.toolCallCancellation?.ids){for(const id of m.toolCallCancellation.ids)this.cancelledTools.add(id);this.emit('onToolCancelled',m.toolCallCancellation.ids);return}
+ if(m.toolCall?.functionCalls){
+  const calls=m.toolCall.functionCalls;
+  const run=fc=>{if(fc.name==='lookup_gita'){const result=lookupGita(fc.args?.query);this.emit('onGrounding',result);return {id:fc.id,name:fc.name,response:result}}if(fc.name==='set_avatar_form'&&FORM_IDS.includes(fc.args?.form)){try{const result=this.emit('onAvatarForm',fc.args.form);if(result?.then)return result.then(()=>({id:fc.id,name:fc.name,response:{form:fc.args.form,status:'displayed'}})).catch(()=>({id:fc.id,name:fc.name,response:{error:'The 3D form failed to load. Do not claim it was displayed.'}}));return {id:fc.id,name:fc.name,response:{form:fc.args.form,status:'displayed'}}}catch{return {id:fc.id,name:fc.name,response:{error:'The form could not be displayed'}}}}return {id:fc.id,name:fc.name,response:{error:'Unknown tool or invalid arguments'}}};
+  const results=calls.map(run);const ws=this.ws;const send=responses=>{if(!this.closed&&this.ws===ws&&ws?.readyState===1){const active=responses.filter(r=>!this.cancelledTools.has(r.id));if(active.length)ws.send(JSON.stringify({toolResponse:{functionResponses:active}}))}};
+  if(results.some(r=>r?.then))return Promise.all(results).then(send);send(results);return;
+ }
+
+ if(m.error){this.fail(errorText(m.error.message));return}
+ if(m.setupComplete){this.ready=true;this.timers.clearTimeout(this.setupTimer);this.emit('onSetup',this.models[this.index]);this.emit('onState','listening',this.models[this.index])}
+ if(m.sessionResumptionUpdate){const r=m.sessionResumptionUpdate;this.handle=r.resumable?r.newHandle||'':'';this.emit('onResume',r)}
+ if(m.goAway){this.renewing=true;this.emit('onGoAway',m.goAway);this.ws?.close(1000,'Session renewal');return}
+ const c=m.serverContent;if(!c)return;
+ if(c.interrupted){this.emit('onInterrupted');this.emit('onState','listening',this.models[this.index])}
+ if(c.inputTranscription?.text)this.emit('onTranscript','user',c.inputTranscription.text,!!c.inputTranscription.finished);
+ if(c.outputTranscription?.text)this.emit('onTranscript','assistant',c.outputTranscription.text,!!c.outputTranscription.finished);
+ for(const p of c.modelTurn?.parts||[]){if(p.inlineData?.mimeType?.startsWith('audio/pcm')){this.emit('onAudio',p.inlineData.data,p.inlineData.mimeType);this.emit('onState','speaking',this.models[this.index])}}
+ if(c.turnComplete){this.emit('onTurnComplete');this.emit('onState','listening',this.models[this.index])}
+ }
+ send(input){if(this.ready&&this.ws?.readyState===1&&this.ws.bufferedAmount<262144){this.ws.send(JSON.stringify({realtimeInput:input}));return true}return false}
+ seed(turns){if(this.ready&&turns.length)this.ws.send(JSON.stringify({clientContent:{turns:turns.slice(-12).map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.text}]})),turnComplete:false}}))}
+ stop(){this.closed=true;this.ready=false;this.epoch++;this.timers.clearTimeout(this.setupTimer);this.timers.clearTimeout(this.retryTimer);if(this.ws){this.ws.onclose=null;this.ws.close(1000,'User ended call');this.ws=null}this.key=''}
+}

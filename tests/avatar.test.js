@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {Avatar} from '../web/avatar.js';
+const bytes=fs.readFileSync(new URL('../app/src/main/assets/Krishna-dialogue.glb',import.meta.url));
+const g=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
+const a=new Avatar({});a.root=g.scene;
+a.root.traverse(o=>{if(/^Rig_(Head|Left_|Right_)/.test(o.name)&&!o.isMesh)a.joints[o.name]={o,q:o.quaternion.clone()};if(o.name==='Cosmic_Form')a.cosmic=o;if(o.name==='Rig_Flute')a.flute=o;if(o.name==='Rig_MouthOpen')a.mouth=[o,o.scale.clone()];if(o.isMesh&&(o.name.startsWith('Eye_ivory')||o.name.startsWith('Iris')))a.eyes.push([o,o.scale.clone()])});
+assert.equal(Object.keys(a.joints).length,7);assert.ok(a.mouth);assert.equal(a.eyes.length,4);assert.ok(a.cosmic.children.length>20);assert.ok(a.flute);assert.ok(a.joints.Rig_Left_Hand);assert.ok(a.joints.Rig_Right_Hand);
+a.setForm('krishna');assert.equal(a.cosmic.visible,false);a.animate(.016);const closed=a.mouth[0].scale.y;const q=a.joints.Rig_Right_Fore.o.quaternion.clone();a.level=.13;for(let i=0;i<60;i++)a.animate(1/60);assert.ok(a.mouth[0].scale.y>closed*3);assert.ok(q.angleTo(a.joints.Rig_Right_Fore.o.quaternion)>.003);
+a.level=0;for(let i=0;i<90;i++)a.animate(1/60);assert.ok(a.energy<.001);a.setForm('vishwaroopa');assert.equal(a.cosmic.visible,true);assert.equal(a.flute.visible,false);a.hide();assert.equal(a.cosmic.visible,false);console.log('PASS actual GLB articulation, audio-driven gestures/mouth, silence decay and explicit form switching');

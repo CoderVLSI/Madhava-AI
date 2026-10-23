@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {JSDOM} from 'jsdom';
+const html=readFileSync('web/index.html','utf8');
+const dom=new JSDOM(html,{url:'https://appassets.androidplatform.net',runScripts:'outside-only',pretendToBeVisual:true});
+const w=dom.window;w.HTMLDialogElement.prototype.showModal=function(){this.open=true};w.HTMLDialogElement.prototype.close=function(){this.open=false};
+w.localStorage.setItem('messages',JSON.stringify([{role:'assistant',text:'A teaching',ts:1,gita:[{reference:'Bhagavad Gita 2.47',type:'Sanskrit verse',sanskrit:'कर्म',speaker:'Krishna',source:'https://example.org'}]}]));
+w.eval(readFileSync('app/src/main/assets/app.js','utf8'));
+const $=id=>w.document.getElementById(id);
+assert.equal($('onboardingDialog').open,true);$('onboardingConsent').checked=true;$('onboardingContinue').click();assert.equal($('onboardingDialog').open,false);
+w.document.querySelector('.gitaSource').click();assert.match($('sourceRecords').textContent,/2.47/);$('closeSources').click();
+w.document.querySelector('.reportLink').click();$('saveReport').click();assert.equal(JSON.parse(w.localStorage.getItem('reports'))[0].status,'local draft — not submitted');
+$('backHome').click();$('openStudy').click();assert.equal($('studyPage').hidden,false);assert.match($('studyReference').textContent,/2.47/);$('studyBookmark').click();assert.match($('studyBookmarks').textContent,/2.47/);
+$('reflectionJournal').value='My reflection';$('reflectionSave').click();assert.match(w.localStorage.getItem('madhava-reflection-v1'),/My reflection/);
+$('closeStudy').click();$('homeSettings').click();$('openPrivacy').click();$('deleteAll').click();$('confirmYes').click();await new Promise(r=>setTimeout(r,0));assert.equal(w.localStorage.length,0);assert.equal($('reflectionJournal').value,'');assert.equal($('onboardingDialog').open,true);
+dom.window.close();console.log('UI smoke passed: onboarding, sources, reports, study, bookmarks, reflection and delete all');

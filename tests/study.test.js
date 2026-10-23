@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {chapterVerses,getStudyVerse,dailyReflection,readBookmarks,toggleBookmark} from '../web/study.js';
+const data=new Map();const storage={getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k)};
+assert.equal(chapterVerses(1).length,47);
+assert.equal(chapterVerses(19).length,0);
+const verse=getStudyVerse('2.47');assert.equal(verse.verse,47);assert.ok(verse.sanskrit.includes('कर्म'));assert.ok(verse.readingAid.kind.includes('not a literal translation'));
+assert.equal(getStudyVerse('2.99'),null);assert.equal(getStudyVerse('work'),null);
+assert.deepEqual(toggleBookmark(storage,'2.47'),['2.47']);assert.deepEqual(toggleBookmark(storage,'2.47'),[]);
+assert.throws(()=>toggleBookmark(storage,'99.99'));
+data.set('madhava-study-bookmarks-v1','["2.47","2.47","9.99",null]');assert.deepEqual(readBookmarks(storage),['2.47']);
+data.set('madhava-study-bookmarks-v1','broken');assert.deepEqual(readBookmarks(storage),[]);
+const a=dailyReflection(new Date(2026,9,3,0,1));const b=dailyReflection(new Date(2026,9,3,23,59));assert.deepEqual(a,b);assert.equal(a.date,'2026-10-03');assert.ok(getStudyVerse(a.id));assert.ok(a.prompt.endsWith('?'));
+assert.notEqual(dailyReflection(new Date(2026,9,4)).id,a.id);
+console.log('Study tests passed: exact source verses, safe bookmarks and stable local daily reflection.');

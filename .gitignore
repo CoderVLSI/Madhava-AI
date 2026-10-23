@@ -1,0 +1,8 @@
+node_modules/
+build/
+.agents/
+.claude/
+skills-lock.json
+development.jks
+*.jks
+.env
