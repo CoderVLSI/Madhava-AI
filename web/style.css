@@ -115,7 +115,7 @@ textarea::placeholder{color:var(--dim)}
 
 /* Call */
 #callPage{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,#27407a 0%,#111b3b 58%,#070b1a 100%);color:#fff;z-index:5;overflow:hidden}
-#avatarCanvas{position:absolute;inset:70px 0 100px;touch-action:none}
+#avatarCanvas{position:absolute;inset:70px 0 276px;touch-action:none}
 #avatarCanvas canvas{width:100%;height:100%;display:block}
 #avatarFallback{position:absolute;width:100%;height:100%;object-fit:cover;opacity:.8}
 .callGradient{pointer-events:none;position:absolute;inset:0;background:linear-gradient(#070b1aa0,transparent 25%,transparent 55%,#070b1a 89%)}
@@ -128,7 +128,7 @@ textarea::placeholder{color:var(--dim)}
 #callBadge{position:absolute;top:119px;left:50%;transform:translateX(-50%);padding:7px 12px;border:1px solid #ffffff2b;background:#ffffff12;border-radius:20px;font-size:12px;color:#dbe3f5;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .statusDot{width:6px;height:6px;border-radius:50%;background:var(--marigold)}
 #selfVideo{position:absolute;right:16px;top:165px;width:87px;height:123px;object-fit:cover;border-radius:14px;border:1px solid #ffffff55;background:#0c1226;transform:scaleX(-1)}
-#callCaptions{position:absolute;bottom:207px;left:25px;right:25px;text-align:center;text-shadow:0 2px 6px #000c;max-height:100px;overflow-y:auto}
+#callCaptions{position:absolute;bottom:207px;left:25px;right:25px;text-align:center;text-shadow:0 2px 6px #000c;max-height:64px;overflow-y:auto}
 #captionLabel{font-size:12px;letter-spacing:.2px;color:var(--marigold)}
 #captionText{font-size:16px;line-height:1.55;margin:7px 0 0;color:#f6efdc}
 .callBottom{position:absolute;bottom:0;left:0;right:0;padding:5px 16px 18px;text-align:center}
@@ -177,7 +177,7 @@ dialog .row .primary,dialog .row .secondary{width:auto}
 #studyBookmarks button{display:block;padding:12px;margin:8px 0;background:var(--river2);border:1px solid var(--line);border-radius:10px;color:var(--sandal);width:100%;text-align:left}
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-@media(max-height:730px){.welcome{padding-top:0}.portrait{width:92px;height:92px;margin-bottom:20px}.portrait::before{inset:-16px}.welcome h1{font-size:28px}.welcome p{margin-bottom:16px}.suggestions button{padding:11px}.previewLink{padding-top:15px}#messages{padding-top:14px}.callHeader{padding-top:12px}#callCaptions{bottom:185px}.callBottom{padding-bottom:12px}.callBottom>p{margin-bottom:14px}.callControls button{width:50px;height:50px}.callBottom .avatarNote{margin-top:15px}}
+@media(max-height:730px){.welcome{padding-top:0}.portrait{width:92px;height:92px;margin-bottom:20px}.portrait::before{inset:-16px}.welcome h1{font-size:28px}.welcome p{margin-bottom:16px}.suggestions button{padding:11px}.previewLink{padding-top:15px}#messages{padding-top:14px}.callHeader{padding-top:12px}#callCaptions{bottom:185px}#avatarCanvas{bottom:254px}.callBottom{padding-bottom:12px}.callBottom>p{margin-bottom:14px}.callControls button{width:50px;height:50px}.callBottom .avatarNote{margin-top:15px}}
 @media(max-width:360px){.contact{gap:6px}.contact img{width:36px;height:36px}.contact strong{font-size:16px}.contact small{max-width:116px;font-size:10px}.chatHeader>.iconbtn{width:36px;padding:7px}.row{flex-wrap:wrap}.row button{flex:1 0 100%}}
 .modeNav .secondary{text-align:left;font-size:15px;font-family:var(--font-display);font-weight:600;padding:15px 16px;border-left:3px solid var(--marigold);background:var(--river)}
 #studyChat{margin-left:auto;padding:8px 16px;min-height:40px}
