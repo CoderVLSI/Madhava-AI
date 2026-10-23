@@ -181,3 +181,5 @@ dialog .row .primary,dialog .row .secondary{width:auto}
 @media(max-width:360px){.contact{gap:6px}.contact img{width:36px;height:36px}.contact strong{font-size:16px}.contact small{max-width:116px;font-size:10px}.chatHeader>.iconbtn{width:36px;padding:7px}.row{flex-wrap:wrap}.row button{flex:1 0 100%}}
 .modeNav .secondary{text-align:left;font-size:15px;font-family:var(--font-display);font-weight:600;padding:15px 16px;border-left:3px solid var(--marigold);background:var(--river)}
 #studyChat{margin-left:auto;padding:8px 16px;min-height:40px}
+.gitaSource{display:flex;align-items:center;min-height:40px;font-size:13px;color:var(--marigold)}
+.reportLink{min-height:36px;padding:8px 0;font-size:12px}
