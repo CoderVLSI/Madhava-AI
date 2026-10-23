@@ -4,7 +4,7 @@ A personal Android companion with WhatsApp-inspired chat, a local 3D Krishna ava
 
 ## Install
 
-Install `Madhava-v1.30.apk` on Android 8 or newer. Open Settings and paste your own Google AI Studio API key. Tap Save key, then Test & refresh models. Return to chat, or use the phone / video button. The video button opens the 3D avatar call screen. Turn the camera on explicitly to send camera frames to Gemini. Preview 3D avatar works offline without a key.
+Install `Madhava-v1.31.apk` on Android 8 or newer. Open Settings and paste your own Google AI Studio API key. Tap Save key, then Test & refresh models. Return to chat, or use the phone / video button. The video button opens the 3D avatar call screen. Turn the camera on explicitly to send camera frames to Gemini. Preview 3D avatar works offline without a key.
 
 The APK is a universal Android package, not a React Native build. It uses a small Java Android shell and an entirely bundled HTML/JS/Three.js UI. No server or external model-download service is required. Gemini API access and quota are required for real responses.
 
