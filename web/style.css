@@ -235,3 +235,28 @@ body.noScroll{overflow:hidden}
 .widgetCard.min>header{border-bottom:0}
 .widgetCard.expanded.min .widgetBody{display:flex}
 .widgetChip{flex-shrink:0;align-self:flex-start;display:block;width:auto;max-width:100%;padding:10px 14px;background:var(--river);color:var(--marigold);text-align:left;font-size:14px;border-radius:14px;cursor:pointer}
+
+/* motion: purposeful, short, and off when the phone asks for reduced motion */
+@keyframes bubbleIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bubble.enter,.widgetCard.enter{animation:bubbleIn .26s ease-out both}
+@keyframes cardOut{to{opacity:0;transform:scale(.97) translateY(4px)}}
+.widgetCard.leaving{animation:cardOut .17s ease-in forwards;pointer-events:none}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page:not([hidden]){animation:pageIn .2s ease-out}
+.thinkDots{display:inline-flex;gap:5px;margin-right:10px;vertical-align:middle}
+.thinkDots i{width:7px;height:7px;border-radius:50%;background:var(--marigold);animation:thinkDot 1.2s ease-in-out infinite}
+.thinkDots i:nth-child(2){animation-delay:.15s}
+.thinkDots i:nth-child(3){animation-delay:.3s}
+@keyframes thinkDot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
+.bubble.pending{font-style:normal}
+.speakGlow{position:absolute;left:50%;top:42%;width:340px;height:340px;margin:-170px 0 0 -170px;border-radius:50%;background:radial-gradient(circle,#f0a63a55 0%,#f0a63a22 38%,transparent 68%);opacity:0;transition:opacity .5s ease;pointer-events:none}
+#callPage.speaking .speakGlow{opacity:1;animation:glowPulse 1.8s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{transform:scale(.92)}50%{transform:scale(1.06)}}
+/* smooth minimize: the card body collapses instead of vanishing */
+.widgetCard .widgetBody{display:grid!important;grid-template-rows:1fr;transition:grid-template-rows .22s ease}
+.widgetCard .wbInner{min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.widgetCard iframe{flex:0 0 auto}
+.callWidget .widgetCard iframe,.widgetCard.expanded iframe{flex:1 1 auto}
+.widgetCard .wbInner>button{margin:14px;width:calc(100% - 28px)}
+.widgetCard.min .widgetBody,.callWidget.compact .widgetBody{grid-template-rows:0fr}
+.widgetCard.expanded .widgetBody{grid-template-rows:1fr!important;flex:1}
