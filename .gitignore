@@ -6,3 +6,4 @@ skills-lock.json
 development.jks
 *.jks
 .env
+tools/last-run/

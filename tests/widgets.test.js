@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {extractWidget,isSafeWidgetHtml,widgetDocument,WIDGET_CSP,WIDGET_MAX} from '../web/widgets.js';
+import {extractWidget,isSafeWidgetHtml,widgetDocument,widgetNote,WIDGET_CSP,WIDGET_MAX} from '../web/widgets.js';
 const good='<div class="card"><button id="b">Breathe</button></div><script>document.getElementById("b").onclick=()=>1</script>';
 let r=extractWidget(`Breathe slowly.\n<madhava-widget title="Breathing guide">${good}</madhava-widget>\nThat is all.`);
 assert.equal(r.widget.title,'Breathing guide');assert.equal(r.widget.html,good);assert.equal(r.text,'Breathe slowly.\n\nThat is all.');
@@ -9,4 +9,8 @@ r=extractWidget('plain answer');assert.deepEqual(r,{text:'plain answer',widget:n
 for(const bad of ['<script>Android.getKey("x")</script><div>padding padding</div>','<script>window["And"+"roid"]</script><div>pad pad pad</div>','<iframe src="x"></iframe><div>pad pad pad pad</div>','<object data=x></object><div>pad pad pad</div>','<div>x</div>','a'.repeat(WIDGET_MAX+1)])assert.equal(isSafeWidgetHtml(bad),false,bad.slice(0,30));
 r=extractWidget('Hi <madhava-widget><script>Android.getKey("n")</script><div>padding padding padding</div></madhava-widget>');assert.equal(r.widget,null);assert.equal(r.text,'Hi');
 const d=widgetDocument(good);assert.ok(d.includes(WIDGET_CSP));assert.ok(d.indexOf('Content-Security-Policy')<d.indexOf(good));assert.ok(d.includes('madhavaWidgetHeight'));assert.match(WIDGET_CSP,/connect-src 'none'/);assert.match(WIDGET_CSP,/default-src 'none'/);
+r=extractWidget('Answer <madhava-widget title="Chariot" summary="Tap six parts of a chariot to see what each means.">'+good+'</madhava-widget>');
+assert.equal(r.widget.title,'Chariot');assert.equal(r.widget.summary,'Tap six parts of a chariot to see what each means.');assert.ok(widgetNote(r.widget).includes('Chariot')&&widgetNote(r.widget).includes('Tap six parts of a chariot'));
+const derived=widgetNote({title:'T',html:'<style>.x{color:red}</style><h3>Heading text</h3><script>var steps=["First step explains the careless gift","Second step explains the waiting"]</'+'script>'});
+assert.match(derived,/Heading text/);assert.match(derived,/careless gift/);assert.ok(!derived.includes('color:red'));assert.equal(widgetNote(null),'');
 console.log('PASS widget extraction, truncation, fenced blocks, bridge/iframe rejection and locked-down document');

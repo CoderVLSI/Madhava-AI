@@ -20,5 +20,5 @@ PY
 if [ ! -f development.jks ]; then
  keytool -genkeypair -keystore development.jks -storepass android -keypass android -alias madhava -dname 'CN=Madhava Personal Build' -keyalg RSA -keysize 2048 -validity 10000 >/dev/null 2>&1
 fi
-"$BT/apksigner" sign --ks development.jks --ks-key-alias madhava --ks-pass pass:android --key-pass pass:android --out build/Madhava-v1.32.apk build/aligned.apk
-"$BT/apksigner" verify --verbose build/Madhava-v1.32.apk
+"$BT/apksigner" sign --ks development.jks --ks-key-alias madhava --ks-pass pass:android --key-pass pass:android --out build/Madhava-v1.33.apk build/aligned.apk
+"$BT/apksigner" verify --verbose build/Madhava-v1.33.apk

@@ -225,3 +225,13 @@ body.noScroll{overflow:hidden}
 #callPage.widgetOn:not(.widgetCompact) #avatarCanvas{bottom:calc(206px + min(44%,340px) + 6px)}
 .callPhoto{position:absolute;right:16px;top:165px;width:87px;height:123px;object-fit:cover;border-radius:14px;border:1px solid #ffffff55;z-index:3}
 @media(max-height:730px){.callWidget{bottom:184px}#callPage.widgetOn:not(.widgetCompact) #avatarCanvas{bottom:calc(184px + min(44%,340px) + 6px)}}
+
+/* explicit minimize / expand / close on interactive explanations */
+.widgetCard>header{padding-right:2px;gap:6px}
+.widgetCard .wbtn{width:40px;height:40px;padding:8px;color:var(--sandal);border-radius:50%}
+.widgetCard .wbtn svg{width:20px;height:20px}
+.widgetCard .wbtn:active{background:var(--river2)}
+.widgetCard.min .widgetBody{display:none}
+.widgetCard.min>header{border-bottom:0}
+.widgetCard.expanded.min .widgetBody{display:flex}
+.widgetChip{flex-shrink:0;align-self:flex-start;display:block;width:auto;max-width:100%;padding:10px 14px;background:var(--river);color:var(--marigold);text-align:left;font-size:14px;border-radius:14px;cursor:pointer}
