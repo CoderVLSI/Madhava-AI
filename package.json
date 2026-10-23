@@ -1,10 +1,10 @@
 {
   "name": "madhava",
-  "version": "1.29.0",
+  "version": "1.30.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/core.test.js && node tests/gita.test.js && node tests/avatar.test.js && node tests/forms.test.js && node tests/study.test.js && node tests/trust.test.js && node tests/ui-smoke.test.js && node --test server/server.test.mjs",
+    "test": "node tests/core.test.js && node tests/gita.test.js && node tests/avatar.test.js && node tests/forms.test.js && node tests/study.test.js && node tests/trust.test.js && node tests/widgets.test.js && node tests/ui-smoke.test.js && node --test server/server.test.mjs",
     "build": "bash build-local.sh"
   },
   "keywords": [],
